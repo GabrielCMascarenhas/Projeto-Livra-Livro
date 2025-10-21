@@ -38,7 +38,7 @@ public record BookDTO(
 
 		@NotNull @Positive @Min(value = 1) @Max(value = 100) Integer stock,
 
-		@NotBlank @Size(min = 36, max = 36) UUID seller,
+		@NotNull UUID seller,
 
 		@NotBlank @Size(min = 10, max = 2000) String description) {
 }

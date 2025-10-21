@@ -24,6 +24,7 @@ import br.edu.atitus.product_service.entities.BookGenreEntity;
 import br.edu.atitus.product_service.repositories.BookConditionRepository;
 import br.edu.atitus.product_service.repositories.BookGenreRepository;
 import br.edu.atitus.product_service.repositories.BookRepository;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/ws/books")
@@ -59,7 +60,7 @@ public class WsProductController {
 	}
 
 	@PostMapping
-	public ResponseEntity<BookEntity> createBook(@RequestBody BookDTO dto, @RequestHeader("X-User-Id") UUID UserId,
+	public ResponseEntity<BookEntity> createBook(@Valid @RequestBody BookDTO dto, @RequestHeader("X-User-Id") UUID UserId,
 			@RequestHeader("X-User-Email") String emailUser, @RequestHeader("X-User-Type") Integer userType)
 			throws Exception {
 
@@ -73,7 +74,7 @@ public class WsProductController {
 	}
 
 	@PatchMapping("/{idProduct}")
-	public ResponseEntity<BookEntity> updateBook(@PathVariable UUID idProduct, @RequestBody BookDTO dto,
+	public ResponseEntity<BookEntity> updateBook(@PathVariable UUID idProduct, @Valid @RequestBody BookDTO dto,
 			@RequestHeader("X-User-Id") UUID UserId, @RequestHeader("X-User-Email") String emailUser,
 			@RequestHeader("X-User-Type") Integer userType) throws Exception {
 
