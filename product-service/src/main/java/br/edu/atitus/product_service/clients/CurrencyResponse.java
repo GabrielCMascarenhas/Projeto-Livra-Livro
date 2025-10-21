@@ -1,12 +1,14 @@
 package br.edu.atitus.product_service.clients;
 
-public class CurrencyResponse { // +- um RECORD
+import java.math.BigDecimal;
+
+public class CurrencyResponse {
 
 	private Long id;
 	private String source;
 	private String target;
 	private double conversionRate;
-	private double convertedValue;
+	private BigDecimal convertedValue;
 	private String environment;
 
 	public Long getId() {
@@ -41,11 +43,11 @@ public class CurrencyResponse { // +- um RECORD
 		this.conversionRate = conversionRate;
 	}
 
-	public double getConvertedValue() {
+	public BigDecimal getConvertedValue() {
 		return convertedValue;
 	}
 
-	public void setConvertedValue(double convertedValue) {
+	public void setConvertedValue(BigDecimal convertedValue) {
 		this.convertedValue = convertedValue;
 	}
 
@@ -56,5 +58,4 @@ public class CurrencyResponse { // +- um RECORD
 	public void setEnvironment(String environment) {
 		this.environment = environment;
 	}
-
 }

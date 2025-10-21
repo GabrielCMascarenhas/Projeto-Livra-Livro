@@ -1,5 +1,6 @@
 package br.edu.atitus.currency_service.clients;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class CurrencyBCResponse {
@@ -15,13 +16,13 @@ public class CurrencyBCResponse {
 	}
 
 	public static class values {
-		private double cotacaoVenda;
+		private BigDecimal cotacaoVenda;
 
-		public double getCotacaoVenda() {
+		public BigDecimal getCotacaoVenda() {
 			return cotacaoVenda;
 		}
 
-		public void setCotacaoVenda(double cotacaoVenda) {
+		public void setCotacaoVenda(BigDecimal cotacaoVenda) {
 			this.cotacaoVenda = cotacaoVenda;
 		}
 	}

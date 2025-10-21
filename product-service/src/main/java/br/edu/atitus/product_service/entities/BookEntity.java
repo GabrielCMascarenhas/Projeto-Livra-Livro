@@ -1,4 +1,6 @@
-package br.edu.atitus.book_service.entities;
+package br.edu.atitus.product_service.entities;
+
+import jakarta.persistence.Transient;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -6,8 +8,6 @@ import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -16,10 +16,6 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "tb_book")
@@ -29,45 +25,52 @@ public class BookEntity {
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
 
-	@Column(nullable = false, length = 255)
+	@Column(name = "image_url")
+	private String imageUrl;
+
+	@Column()
 	private String title;
 
-//	@Column
-//	private String photo;
+	@Column()
+	private BigDecimal price;
 
-	@ManyToMany
-	@JoinTable(name = "tb_book_genres", joinColumns = @JoinColumn(name = "book_id"), inverseJoinColumns = @JoinColumn(name = "genre_id", nullable = false))
-	private List<BookGenreEntity> genre;
+	@Column(length = 3)
+	private String currency;
 
 	@Column(name = "number_of_pages")
-	@Positive(message = "O número de páginas deve ser um valor positivo")
-	@Max(value = 10000, message = "O número de págnas não pode exceder 10.000")
 	private Integer numberOfPages;
+
+	@ManyToMany
+	@JoinTable(name = "tb_book_genres", joinColumns = @JoinColumn(name = "book_id"), inverseJoinColumns = @JoinColumn(name = "genre_id"))
+	private List<BookGenreEntity> genre;
 
 	@ManyToOne
 	@JoinColumn(name = "book_condition_id")
 	private BookConditionEntity bookCondition;
 
-	@Column(nullable = false, precision = 7, scale = 2)
-	private BigDecimal price;
-
 	@Column(name = "number_of_years")
-	@Min(value = 0, message = "A quantidade de anos não pode ser negativa")
-	@Max(value = 100, message = "A quantidade de anos parece ser excessiva")
 	private Integer numberOfYears;
 
-	@Column(unique = true, length = 13)
+	@Column()
 	private String isbn;
 
-	@Column(nullable = false)
+	@Column()
 	private String publisher;
 
-	@Column(nullable = false)
+	@Column()
+	private Integer stock;
+
+	@Column()
 	private UUID seller;
 
 	@Column(columnDefinition = "TEXT")
-	@Size(max = 2000, message = "A descrição não pode exceder 2000 caracteres")
 	private String description;
+
+	@Transient
+	private String environment;
+
+	@Transient
+	private BigDecimal convertedPrice;
 
 	public UUID getId() {
 		return id;
@@ -77,13 +80,13 @@ public class BookEntity {
 		this.id = id;
 	}
 
-//	public String getPhoto() {
-//		return photo;
-//	}
+	public String getImageUrl() {
+		return imageUrl;
+	}
 
-//	public void setPhoto(String photo) {
-//		this.photo = photo;
-//	}
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
 
 	public String getTitle() {
 		return title;
@@ -93,20 +96,20 @@ public class BookEntity {
 		this.title = title;
 	}
 
-	public List<BookGenreEntity> getGenre() {
-		return genre;
+	public BigDecimal getPrice() {
+		return price;
 	}
 
-	public void setGenre(List<BookGenreEntity> genre) {
-		this.genre = genre;
+	public void setPrice(BigDecimal price) {
+		this.price = price;
 	}
 
-	public UUID getSeller() {
-		return seller;
+	public String getCurrency() {
+		return currency;
 	}
 
-	public void setSeller(UUID seller) {
-		this.seller = seller;
+	public void setCurrency(String currency) {
+		this.currency = currency;
 	}
 
 	public Integer getNumberOfPages() {
@@ -117,20 +120,20 @@ public class BookEntity {
 		this.numberOfPages = numberOfPages;
 	}
 
+	public List<BookGenreEntity> getGenre() {
+		return genre;
+	}
+
+	public void setGenre(List<BookGenreEntity> genre) {
+		this.genre = genre;
+	}
+
 	public BookConditionEntity getBookCondition() {
 		return bookCondition;
 	}
 
 	public void setBookCondition(BookConditionEntity bookCondition) {
 		this.bookCondition = bookCondition;
-	}
-
-	public BigDecimal getPrice() {
-		return price;
-	}
-
-	public void setPrice(BigDecimal price) {
-		this.price = price;
 	}
 
 	public Integer getNumberOfYears() {
@@ -157,11 +160,43 @@ public class BookEntity {
 		this.publisher = publisher;
 	}
 
+	public Integer getStock() {
+		return stock;
+	}
+
+	public void setStock(Integer stock) {
+		this.stock = stock;
+	}
+
+	public UUID getSeller() {
+		return seller;
+	}
+
+	public void setSeller(UUID seller) {
+		this.seller = seller;
+	}
+
 	public String getDescription() {
 		return description;
 	}
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getEnvironment() {
+		return environment;
+	}
+
+	public void setEnvironment(String environment) {
+		this.environment = environment;
+	}
+
+	public BigDecimal getConvertedPrice() {
+		return convertedPrice;
+	}
+
+	public void setConvertedPrice(BigDecimal convertedPrice) {
+		this.convertedPrice = convertedPrice;
 	}
 }

@@ -1,5 +1,7 @@
 package br.edu.atitus.currency_service.controllers;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -38,10 +40,8 @@ public class CurrencyController {
 	}
 
 	@GetMapping("/{value}/{source}/{target}")
-	public ResponseEntity<CurrencyEntity> getConversion(@PathVariable double value, @PathVariable String source,
+	public ResponseEntity<CurrencyEntity> getConversion(@PathVariable BigDecimal value, @PathVariable String source,
 			@PathVariable String target) throws Exception {
-
-//	CurrencyEntity currency = repository.findBySourceAndTarget(source, target).orElseThrow(() -> new Exception("Currency not found"));
 
 		source = source.toUpperCase();
 		target = target.toUpperCase();
@@ -59,11 +59,11 @@ public class CurrencyController {
 			currency.setTarget(target);
 
 			if (source.equals(target)) {
-				currency.setConversionRate(1);
+				currency.setConversionRate(BigDecimal.ONE);
 			} else {
 				try {
-					double sourceRate = 1;
-					double targetRate = 1;
+					BigDecimal sourceRate = BigDecimal.ONE;
+					BigDecimal targetRate = BigDecimal.ONE;
 
 					LocalDate date = LocalDate.now();
 					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
@@ -105,7 +105,8 @@ public class CurrencyController {
 						}
 						targetRate = resp.getValue().get(resp.getValue().size() - 1).getCotacaoVenda();
 					}
-					currency.setConversionRate(sourceRate / targetRate);
+					BigDecimal result = sourceRate.divide(targetRate, 6, RoundingMode.HALF_UP);
+					currency.setConversionRate(result);
 					dataSource = "API BCB";
 
 				} catch (Exception e) {
@@ -118,7 +119,7 @@ public class CurrencyController {
 			cacheManager.getCache(nameCache).put(keyCache, currency);
 		}
 
-		currency.setConvertedValue(value * currency.getConversionRate());
+		currency.setConvertedValue(value.multiply(currency.getConversionRate()));
 		currency.setEnvironment("Currency running in port: " + serverPort + " - Source: " + dataSource);
 		return ResponseEntity.ok(currency);
 	}

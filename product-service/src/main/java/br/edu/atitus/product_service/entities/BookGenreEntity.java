@@ -1,4 +1,4 @@
-package br.edu.atitus.book_service.entities;
+package br.edu.atitus.product_service.entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

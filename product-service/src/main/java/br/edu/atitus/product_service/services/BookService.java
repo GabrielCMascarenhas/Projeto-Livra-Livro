@@ -1,17 +1,17 @@
-package br.edu.atitus.book_service.services;
+package br.edu.atitus.product_service.services;
 
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import br.edu.atitus.book_service.dtos.BookDTO;
-import br.edu.atitus.book_service.entities.BookConditionEntity;
-import br.edu.atitus.book_service.entities.BookEntity;
-import br.edu.atitus.book_service.entities.BookGenreEntity;
-import br.edu.atitus.book_service.repositories.BookConditionRepository;
-import br.edu.atitus.book_service.repositories.BookGenreRepository;
-import br.edu.atitus.book_service.repositories.BookRepository;
+import br.edu.atitus.product_service.dtos.BookDTO;
+import br.edu.atitus.product_service.entities.BookConditionEntity;
+import br.edu.atitus.product_service.entities.BookEntity;
+import br.edu.atitus.product_service.entities.BookGenreEntity;
+import br.edu.atitus.product_service.repositories.BookConditionRepository;
+import br.edu.atitus.product_service.repositories.BookGenreRepository;
+import br.edu.atitus.product_service.repositories.BookRepository;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -51,7 +51,7 @@ public class BookService {
 		newBook.setBookCondition(conditionObject);
 
 //		TODO substituir lógica do seller
-		newBook.setSeller(UUID.randomUUID());
+		newBook.setSeller(UUID.randomUUID()); /////////////////////////////////
 
 		return bookRepository.save(newBook);
 	}

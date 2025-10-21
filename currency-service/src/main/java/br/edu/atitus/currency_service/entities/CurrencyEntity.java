@@ -1,5 +1,7 @@
 package br.edu.atitus.currency_service.entities;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,18 +24,18 @@ public class CurrencyEntity {
 	private String target;
 
 	@Column(name = "conversion_rate")
-	private double conversionRate;
+	private BigDecimal conversionRate;
 
 	@Transient
-	private double convertedValue;
+	private BigDecimal convertedValue;
 	@Transient
 	private String environment;
 
-	public double getConvertedValue() {
+	public BigDecimal getConvertedValue() {
 		return convertedValue;
 	}
 
-	public void setConvertedValue(double convertedValue) {
+	public void setConvertedValue(BigDecimal convertedValue) {
 		this.convertedValue = convertedValue;
 	}
 
@@ -69,11 +71,11 @@ public class CurrencyEntity {
 		this.target = target;
 	}
 
-	public double getConversionRate() {
+	public BigDecimal getConversionRate() {
 		return conversionRate;
 	}
 
-	public void setConversionRate(double conversionRate) {
+	public void setConversionRate(BigDecimal conversionRate) {
 		this.conversionRate = conversionRate;
 	}
 

@@ -9,5 +9,4 @@ import br.edu.atitus.currency_service.entities.CurrencyEntity;
 public interface CurrencyRepository extends JpaRepository<CurrencyEntity, Long> {
 
 	Optional<CurrencyEntity> findBySourceAndTarget(String source, String target);
-	// aqui eu respeito o camelcase
 }
