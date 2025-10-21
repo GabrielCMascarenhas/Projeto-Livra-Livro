@@ -1,5 +1,6 @@
 package br.edu.atitus.product_service.controllers;
 
+import java.util.List;
 import java.util.UUID;
 
 import javax.security.sasl.AuthenticationException;
@@ -17,27 +18,48 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.edu.atitus.product_service.dtos.BookDTO;
+import br.edu.atitus.product_service.entities.BookConditionEntity;
 import br.edu.atitus.product_service.entities.BookEntity;
+import br.edu.atitus.product_service.entities.BookGenreEntity;
+import br.edu.atitus.product_service.repositories.BookConditionRepository;
+import br.edu.atitus.product_service.repositories.BookGenreRepository;
 import br.edu.atitus.product_service.repositories.BookRepository;
 
 @RestController
 @RequestMapping("/ws/books")
 public class WsProductController {
 	private final BookRepository repository;
+	private BookGenreRepository bookGenreRepository;
+	private BookConditionRepository bookConditionRepository;
 
-	public WsProductController(BookRepository repository) {
+	public WsProductController(BookRepository repository, BookGenreRepository bookGenreRepository,
+			BookConditionRepository bookConditionRepository) {
 		super();
 		this.repository = repository;
+		this.bookGenreRepository = bookGenreRepository;
+		this.bookConditionRepository = bookConditionRepository;
 	}
 
-	private BookEntity convertDto2Entity(BookDTO dto) {
+	private BookEntity convertDto2Entity(BookDTO dto) throws Exception {
 		var product = new BookEntity();
 		BeanUtils.copyProperties(dto, product);
+
+		if (dto.genresId() != null && !dto.genresId().isEmpty()) {
+			List<BookGenreEntity> genres = bookGenreRepository.findAllById(dto.genresId());
+			product.setGenre(genres);
+		}
+
+		if (dto.bookConditionId() != null) {
+			BookConditionEntity condition = bookConditionRepository.findById(dto.bookConditionId())
+					.orElseThrow(() -> new Exception("Book Contidition not found"));
+			product.setBookCondition(condition);
+		}
+
 		return product;
 	}
 
 	@PostMapping
-	public ResponseEntity<BookEntity> post(@RequestBody BookDTO dto, @RequestHeader("X-User-Id") UUID UserId,
+	public ResponseEntity<BookEntity> createBook(@RequestBody BookDTO dto, @RequestHeader("X-User-Id") UUID UserId,
 			@RequestHeader("X-User-Email") String emailUser, @RequestHeader("X-User-Type") Integer userType)
 			throws Exception {
 
@@ -51,7 +73,7 @@ public class WsProductController {
 	}
 
 	@PatchMapping("/{idProduct}")
-	public ResponseEntity<BookEntity> put(@PathVariable UUID idProduct, @RequestBody BookDTO dto,
+	public ResponseEntity<BookEntity> updateBook(@PathVariable UUID idProduct, @RequestBody BookDTO dto,
 			@RequestHeader("X-User-Id") UUID UserId, @RequestHeader("X-User-Email") String emailUser,
 			@RequestHeader("X-User-Type") Integer userType) throws Exception {
 
@@ -66,7 +88,7 @@ public class WsProductController {
 	}
 
 	@DeleteMapping("/{idProduct}")
-	public ResponseEntity<String> delete(@PathVariable UUID idProduct, @RequestHeader("X-User-Id") Long UserId,
+	public ResponseEntity<String> deleteBook(@PathVariable UUID idProduct, @RequestHeader("X-User-Id") UUID UserId,
 			@RequestHeader("X-User-Email") String emailUser, @RequestHeader("X-User-Type") Integer userType)
 			throws Exception {
 

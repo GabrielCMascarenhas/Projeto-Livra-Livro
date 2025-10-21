@@ -1,6 +1,7 @@
 package br.edu.atitus.auth_service.entities;
 
 import java.util.Collection;
+import java.util.UUID;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,8 +22,8 @@ import jakarta.persistence.Table;
 public class UserEntity implements UserDetails{
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	@GeneratedValue(strategy = GenerationType.UUID)
+	private UUID id;
 	
 	@Column(nullable = false)
 	private String name;
@@ -38,11 +39,11 @@ public class UserEntity implements UserDetails{
 	@Enumerated(EnumType.ORDINAL)
 	private UserType type;
 
-	public Long getId() {
+	public UUID getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(UUID id) {
 		this.id = id;
 	}
 
@@ -89,8 +90,4 @@ public class UserEntity implements UserDetails{
 	public String getUsername() {
 		return getEmail();
 	}
-
-
-	
-	
 }

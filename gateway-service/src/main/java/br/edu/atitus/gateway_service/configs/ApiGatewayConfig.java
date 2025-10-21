@@ -10,9 +10,10 @@ public class ApiGatewayConfig {
 
 	@Bean
 	RouteLocator gatRoutes(RouteLocatorBuilder builder) {
-		return builder.routes().route(p -> p.path("/get")
-				.filters(f -> f.addRequestHeader("X-USER-NAME", "username").addRequestParameter("name", "fulano"))
-				.uri("http://httpbin.org:80"))
+		return builder.routes()
+//				.route(p -> p.path("/get")
+//						.filters(f -> f.addRequestHeader("X-USER-NAME", "username")
+//						.addRequestParameter("name", "fulano")).uri("http://httpbin.org:80"))
 				.route(p -> p.path("/books/**").uri("lb://product-service"))
 				.route(p -> p.path("/ws/books/**").uri("lb://product-service"))
 				// http://localhost:8080 (era assim antes do lb...)

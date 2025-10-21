@@ -1,5 +1,5 @@
 create table tb_user (
-        id serial not null,
+        id UUID default gen_random_uuid() not null,
         email varchar(255) not null,
         name varchar(255) not null,
         password varchar(255) not null,
