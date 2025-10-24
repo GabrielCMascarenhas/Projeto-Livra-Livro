@@ -2,6 +2,7 @@ package br.edu.atitus.order_service.controllers;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,7 +39,7 @@ public class OrderController {
 
 	@PostMapping
 	public ResponseEntity<OrderEntity> createOrder(@RequestBody OrderDTO orderDTO,
-			@RequestHeader("X-User-Id") Long userId, @RequestHeader("X-User-Email") String userEmail,
+			@RequestHeader("X-User-Id") UUID userId, @RequestHeader("X-User-Email") String userEmail,
 			@RequestHeader("X-User-Type") Integer userType) {
 
 		OrderEntity order = new OrderEntity();
@@ -71,7 +72,7 @@ public class OrderController {
 	@GetMapping("/{targetCurrency}")
 	public ResponseEntity<Page<OrderEntity>> listOrdersByUser(@PathVariable String targetCurrency,
 			@PageableDefault(page = 0, size = 5, sort = "orderDate", direction = Direction.ASC) Pageable pageable,
-			@RequestHeader("X-User-Id") Long userId, @RequestHeader("X-User-Email") String userEmail,
+			@RequestHeader("X-User-Id") UUID userId, @RequestHeader("X-User-Email") String userEmail,
 			@RequestHeader("X-User-Type") Integer userType) {
 		targetCurrency = targetCurrency.toUpperCase();
 		Page<OrderEntity> orders = orderService.findOrdersByCustomerId(userId, targetCurrency, pageable);

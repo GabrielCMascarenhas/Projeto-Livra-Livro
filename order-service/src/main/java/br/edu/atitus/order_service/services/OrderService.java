@@ -1,5 +1,8 @@
 package br.edu.atitus.order_service.services;
 
+import java.math.BigDecimal;
+import java.util.UUID;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,28 +28,32 @@ public class OrderService {
 		this.currencyClient = currencyClient;
     }
 
-    public OrderEntity createOrder(OrderEntity order, Long userId) {
+    public OrderEntity createOrder(OrderEntity order, UUID userId) {
         
         return orderRepository.save(order);
     }
 
-    public Page<OrderEntity> findOrdersByCustomerId(Long customerId, String targetCurrency, Pageable pageable) {
+    public Page<OrderEntity> findOrdersByCustomerId(UUID customerId, String targetCurrency, Pageable pageable) {
     	Page<OrderEntity> orders = orderRepository.findByCustomerId(customerId, pageable);
     
     	
     	for (OrderEntity order : orders) {
-    		double totalPrice = 0.0;
-        	double totalConvertedPrice = 0.0;
+    		BigDecimal totalPrice = BigDecimal.ZERO;
+        	BigDecimal totalConvertedPrice = BigDecimal.ZERO;
         
             for (OrderItemEntity item : order.getItems()) {
                 ProductResponse product = productClient.getProductById(item.getProductId());
                 item.setProduct(product);
-                totalPrice += item.getPriceAtPurchase() * item.getQuantity();
+                
+                BigDecimal quantity = new BigDecimal(item.getQuantity()); 
+                BigDecimal totalPriceMultiplication = item.getPriceAtPurchase().multiply(quantity);
+                totalPrice = totalPrice.add(totalPriceMultiplication);
                 
                 CurrencyResponse currencyResponse = currencyClient.getCurrency(
 						item.getPriceAtPurchase(), item.getCurrencyAtPurchase(), targetCurrency);
                 item.setConvertedPriceAtPruchase(currencyResponse.getConvertedValue());
-                totalConvertedPrice += item.getConvertedPriceAtPruchase() * item.getQuantity();
+                BigDecimal totalConvertedPriceMultiplication = item.getConvertedPriceAtPruchase().multiply(quantity);
+                totalConvertedPrice = totalConvertedPrice.add(totalConvertedPriceMultiplication);
             }
             order.setTotalPrice(totalPrice);
             order.setTotalConvertedPrice(totalConvertedPrice);

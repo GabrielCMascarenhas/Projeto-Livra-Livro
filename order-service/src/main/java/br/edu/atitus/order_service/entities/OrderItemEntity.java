@@ -1,5 +1,8 @@
 package br.edu.atitus.order_service.entities;
 
+import java.math.BigDecimal;
+import java.util.UUID;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import br.edu.atitus.order_service.clients.ProductResponse;
@@ -19,18 +22,18 @@ import jakarta.persistence.Transient;
 public class OrderItemEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     // ID do produto vindo do product-service
     @Column(nullable = false)
-    private Long productId;
+    private UUID productId;
 
     @Column(nullable = false)
     private Integer quantity;
 
     @Column(nullable = false)
-    private double priceAtPurchase; // guarda o preço no momento da compra
+    private BigDecimal priceAtPurchase; // guarda o preço no momento da compra
 
     @Column(nullable = false)
     private String currencyAtPurchase; // guarda a moeda no momento da compra
@@ -44,21 +47,21 @@ public class OrderItemEntity {
     private ProductResponse product; // preenchido via chamada REST
 
     @Transient
-    private double convertedPriceAtPruchase; 
+    private BigDecimal convertedPriceAtPruchase; 
     
-	public Long getId() {
+	public UUID getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(UUID id) {
 		this.id = id;
 	}
 
-	public Long getProductId() {
+	public UUID getProductId() {
 		return productId;
 	}
 
-	public void setProductId(Long productId) {
+	public void setProductId(UUID productId) {
 		this.productId = productId;
 	}
 
@@ -70,11 +73,11 @@ public class OrderItemEntity {
 		this.quantity = quantity;
 	}
 
-	public double getPriceAtPurchase() {
+	public BigDecimal getPriceAtPurchase() {
 		return priceAtPurchase;
 	}
 
-	public void setPriceAtPurchase(double priceAtPurchase) {
+	public void setPriceAtPurchase(BigDecimal priceAtPurchase) {
 		this.priceAtPurchase = priceAtPurchase;
 	}
 
@@ -102,11 +105,11 @@ public class OrderItemEntity {
 		this.product = product;
 	}
 
-	public double getConvertedPriceAtPruchase() {
+	public BigDecimal getConvertedPriceAtPruchase() {
 		return convertedPriceAtPruchase;
 	}
 
-	public void setConvertedPriceAtPruchase(double convertedPriceAtPruchase) {
+	public void setConvertedPriceAtPruchase(BigDecimal convertedPriceAtPruchase) {
 		this.convertedPriceAtPruchase = convertedPriceAtPruchase;
 	}
 

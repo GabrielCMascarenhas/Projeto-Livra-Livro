@@ -1,5 +1,7 @@
 package br.edu.atitus.order_service.clients;
 
+import java.math.BigDecimal;
+
 public class CurrencyResponse {
 
 	private Long id;
@@ -8,9 +10,9 @@ public class CurrencyResponse {
 
 	private String target;
 
-	private double conversionRate;
+	private BigDecimal conversionRate;
 
-	private double convertedValue;
+	private BigDecimal convertedValue;
 	
 	private String enviroment;
 
@@ -38,19 +40,19 @@ public class CurrencyResponse {
 		this.target = target;
 	}
 
-	public double getConversionRate() {
+	public BigDecimal getConversionRate() {
 		return conversionRate;
 	}
 
-	public void setConversionRate(double conversionRate) {
+	public void setConversionRate(BigDecimal conversionRate) {
 		this.conversionRate = conversionRate;
 	}
 
-	public double getConvertedValue() {
+	public BigDecimal getConvertedValue() {
 		return convertedValue;
 	}
 
-	public void setConvertedValue(double convertedValue) {
+	public void setConvertedValue(BigDecimal convertedValue) {
 		this.convertedValue = convertedValue;
 	}
 

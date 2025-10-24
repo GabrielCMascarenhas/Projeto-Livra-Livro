@@ -1,7 +1,9 @@
 package br.edu.atitus.order_service.entities;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -21,30 +23,30 @@ import jakarta.persistence.Transient;
 public class OrderEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
     
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime orderDate;
 
     @Column(nullable = false)
     @JsonIgnore
-    private Long customerId; // ID do cliente logado
+    private UUID customerId; // ID do cliente logado
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItemEntity> items;
     
     @Transient
-    private double totalPrice;
+    private BigDecimal totalPrice;
     
     @Transient
-    private double totalConvertedPrice;
+    private BigDecimal totalConvertedPrice;
 
-	public Long getId() {
+	public UUID getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(UUID id) {
 		this.id = id;
 	}
 
@@ -56,11 +58,11 @@ public class OrderEntity {
 		this.orderDate = orderDate;
 	}
 
-	public Long getCustomerId() {
+	public UUID getCustomerId() {
 		return customerId;
 	}
 
-	public void setCustomerId(Long customerId) {
+	public void setCustomerId(UUID customerId) {
 		this.customerId = customerId;
 	}
 
@@ -72,19 +74,19 @@ public class OrderEntity {
 		this.items = items;
 	}
 
-	public double getTotalPrice() {
+	public BigDecimal getTotalPrice() {
 		return totalPrice;
 	}
 
-	public void setTotalPrice(double totalPrice) {
+	public void setTotalPrice(BigDecimal totalPrice) {
 		this.totalPrice = totalPrice;
 	}
 
-	public double getTotalConvertedPrice() {
+	public BigDecimal getTotalConvertedPrice() {
 		return totalConvertedPrice;
 	}
 
-	public void setTotalConvertedPrice(double totalConvertedPrice) {
+	public void setTotalConvertedPrice(BigDecimal totalConvertedPrice) {
 		this.totalConvertedPrice = totalConvertedPrice;
 	}
 
