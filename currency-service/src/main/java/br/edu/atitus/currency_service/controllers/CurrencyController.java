@@ -119,7 +119,9 @@ public class CurrencyController {
 			cacheManager.getCache(nameCache).put(keyCache, currency);
 		}
 
-		currency.setConvertedValue(value.multiply(currency.getConversionRate()));
+		BigDecimal rawConvertedValue = value.multiply(currency.getConversionRate());
+		currency.setConvertedValue(rawConvertedValue.setScale(3, RoundingMode.DOWN));
+		
 		currency.setEnvironment("Currency running in port: " + serverPort + " - Source: " + dataSource);
 		return ResponseEntity.ok(currency);
 	}
