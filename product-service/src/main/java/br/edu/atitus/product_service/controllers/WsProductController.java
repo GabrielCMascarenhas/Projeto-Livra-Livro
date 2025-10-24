@@ -64,7 +64,7 @@ public class WsProductController {
 			@RequestHeader("X-User-Email") String emailUser, @RequestHeader("X-User-Type") Integer userType)
 			throws Exception {
 
-		if (userType != 0)
+		if (userType != 0 && userType != 1)
 			throw new AuthenticationException("Usuário sem permissão");
 
 		var product = convertDto2Entity(dto);
@@ -78,7 +78,7 @@ public class WsProductController {
 			@RequestHeader("X-User-Id") UUID UserId, @RequestHeader("X-User-Email") String emailUser,
 			@RequestHeader("X-User-Type") Integer userType) throws Exception {
 
-		if (userType != 0)
+		if (userType != 0 && userType != 1)
 			throw new AuthenticationException("Usuário sem permissão");
 
 		var product = convertDto2Entity(dto);
@@ -93,7 +93,7 @@ public class WsProductController {
 			@RequestHeader("X-User-Email") String emailUser, @RequestHeader("X-User-Type") Integer userType)
 			throws Exception {
 
-		if (userType != 0)
+		if (userType != 0 && userType != 1)
 			throw new AuthenticationException("Usuário sem permissão");
 
 		repository.deleteById(idProduct);
