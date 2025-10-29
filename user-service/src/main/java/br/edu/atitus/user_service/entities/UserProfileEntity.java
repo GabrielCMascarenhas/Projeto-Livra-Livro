@@ -21,6 +21,9 @@ public class UserProfileEntity {
 	@Id
 	@Column()
 	private UUID id;
+	
+	@Column()
+	private String name;
 
 	@Column(name = "phone_number")
 	private String phoneNumber;
@@ -53,6 +56,14 @@ public class UserProfileEntity {
 
 	public void setId(UUID id) {
 		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getPhoneNumber() {

@@ -7,7 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.edu.atitus.user_service.dtos.UserAddressDTO;
 import br.edu.atitus.user_service.dtos.UserDTO;
-import br.edu.atitus.user_service.dtos.UserDetailsDTO;
+import br.edu.atitus.user_service.dtos.UserDetailsRequestDTO;
+import br.edu.atitus.user_service.dtos.UserDetailsResponseDTO;
+import br.edu.atitus.user_service.dtos.UserUpdateDTO;
 import br.edu.atitus.user_service.entities.UserAddressEntity;
 import br.edu.atitus.user_service.entities.UserProfileEntity;
 import br.edu.atitus.user_service.entities.UserProfileGenreEntity;
@@ -32,6 +34,10 @@ public class UserProfileService {
 	public UserProfileEntity createProfile(UserDTO dto) throws Exception {
 
 		// TODO melhorar verificações
+		if(dto.name() == null || dto.name().isEmpty()) {
+			throw new Exception("Nome não pode ser nulo");
+		}
+		
 		if (dto.cpf() == null || dto.cpf().isEmpty()) {
 			throw new Exception("CPF não pode ser nulo");
 		}
@@ -47,7 +53,7 @@ public class UserProfileService {
 		UserProfileEntity profile = new UserProfileEntity();
 
 		profile.setId(dto.id());
-		
+		profile.setName(dto.name());
 		profile.setCpf(dto.cpf());
 		profile.setPhoneNumber(dto.phoneNumber());
 		profile.setDateOfBirth(dto.dateOfBirth());
@@ -58,9 +64,13 @@ public class UserProfileService {
 	}
 	
 	@Transactional
-	public UserDTO alterInfo (UUID id, UserDTO dto) throws Exception {
+	public UserUpdateDTO alterInfo (UUID id, UserUpdateDTO dto) throws Exception {
 		UserProfileEntity profile = userProfileRepository.findById(id)
 				.orElseThrow(() -> new Exception("Usuário não encontrado no Banco de Dados"));
+		
+		if (dto.name() == null || dto.name().isEmpty()) {
+			throw new Exception("Nome não pode ser nulo");
+		}
 		
 		if (dto.phoneNumber() == null || dto.phoneNumber().isEmpty()) {
 			throw new Exception("Número de Celular não pode ser nulo");
@@ -70,18 +80,18 @@ public class UserProfileService {
 			throw new Exception("Data de nascimento não pode ser nulo");
 		}
 		
-		profile.setCpf(dto.cpf());
+		profile.setName(dto.name());
+		profile.setPhoneNumber(dto.phoneNumber());
 		profile.setDateOfBirth(dto.dateOfBirth());
 		
 		UserProfileEntity savedProfile = userProfileRepository.save(profile);
 		
-		return convertToInfoDTO(savedProfile);
+		return convertToUpdateInfoDTO(savedProfile);
 		
 	}
 	
 	@Transactional
 	public UserDTO getInfoById (UUID id) throws Exception {
-		 
 		UserProfileEntity profile = userProfileRepository.findById(id)
 				.orElseThrow(() -> new Exception ("Usuário não encontrado"));
 		
@@ -153,7 +163,7 @@ public class UserProfileService {
 	//Detalhes
 	
 	@Transactional
-	public UserDetailsDTO addDetails (UUID id, UserDetailsDTO dto) throws Exception {
+	public UserDetailsResponseDTO addDetails (UUID id, UserDetailsRequestDTO dto) throws Exception {
 		UserProfileEntity profile = userProfileRepository.findById(id)
 				.orElseThrow(() -> new Exception ("Usuário não encontrado"));
 		
@@ -168,11 +178,11 @@ public class UserProfileService {
 		
 		UserProfileEntity savedProfile = userProfileRepository.save(profile);
 		
-		return convertoToDetailsDTO(savedProfile);
+		return convertToDetailsDTO(savedProfile);
 	}
 	
 	@Transactional
-	public UserDetailsDTO updateDetails (UUID id, UserDetailsDTO dto) throws Exception {
+	public UserDetailsResponseDTO updateDetails (UUID id, UserDetailsRequestDTO dto) throws Exception {
 		UserProfileEntity profile = userProfileRepository.findById(id)
 				.orElseThrow(() -> new Exception ("Usuário não encontrado"));
 		
@@ -187,15 +197,15 @@ public class UserProfileService {
 		
 		UserProfileEntity savedProfile = userProfileRepository.save(profile);
 		
-		return convertoToDetailsDTO(savedProfile);
+		return convertToDetailsDTO(savedProfile);
 	}
 	
 	@Transactional
-	public UserDetailsDTO getDetailsById (UUID id) throws Exception {
+	public UserDetailsResponseDTO getDetailsById (UUID id) throws Exception {
 		UserProfileEntity profile = userProfileRepository.findById(id)
 				.orElseThrow(() -> new Exception ("Usuário não encontrado"));
 		
-		return convertoToDetailsDTO(profile);
+		return convertToDetailsDTO(profile);
 	}
 	
 	//Mappers
@@ -203,15 +213,27 @@ public class UserProfileService {
 	private UserDTO convertToInfoDTO(UserProfileEntity profile) {
 		return new UserDTO(
 				profile.getId(),
+				profile.getName(),
 				profile.getCpf(),
 				profile.getPhoneNumber(),
 				profile.getDateOfBirth());
 	}
 	
-	private UserDetailsDTO convertoToDetailsDTO(UserProfileEntity profile) {
-		return new UserDetailsDTO (
+	private UserUpdateDTO convertToUpdateInfoDTO(UserProfileEntity profile) {
+		return new UserUpdateDTO(
+				profile.getId(),
+				profile.getName(),
+				profile.getPhoneNumber(),
+				profile.getDateOfBirth());
+	}
+	
+	private UserDetailsResponseDTO convertToDetailsDTO(UserProfileEntity profile) {
+		
+		Integer genreId = (profile.getUserGenre() != null) ? profile.getUserGenre().getId() : null;
+		
+		return new UserDetailsResponseDTO (
 				profile.getUserImageUrl(),
-				 profile.getUserGenre().getId(),
-				 profile.getDescription());
+				profile.getUserGenre(),
+				profile.getDescription());
 	}
 }

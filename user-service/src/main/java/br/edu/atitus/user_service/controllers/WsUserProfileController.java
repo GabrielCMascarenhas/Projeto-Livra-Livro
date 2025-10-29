@@ -17,9 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.edu.atitus.user_service.dtos.UserAddressDTO;
 import br.edu.atitus.user_service.dtos.UserDTO;
-import br.edu.atitus.user_service.dtos.UserDetailsDTO;
+import br.edu.atitus.user_service.dtos.UserDetailsRequestDTO;
+import br.edu.atitus.user_service.dtos.UserDetailsResponseDTO;
+import br.edu.atitus.user_service.dtos.UserUpdateDTO;
 import br.edu.atitus.user_service.entities.UserAddressEntity;
-import br.edu.atitus.user_service.entities.UserProfileEntity;
 import br.edu.atitus.user_service.services.UserProfileService;
 
 @RestController
@@ -35,20 +36,20 @@ public class WsUserProfileController {
 
 	// Informaçoes Gerais do Usuário
 
-	@PatchMapping("/{id}")
-	public ResponseEntity<UserDTO> updateUserInfo(@PathVariable UUID id, @RequestBody UserDTO dto,
+	@PatchMapping("/{id}/info")
+	public ResponseEntity<UserUpdateDTO> updateUserInfo(@PathVariable UUID id, @RequestBody UserUpdateDTO dto,
 			@RequestHeader("X-User-Id") UUID UserId, @RequestHeader("X-User-Email") String emailUser,
 			@RequestHeader("X-User-Type") Integer userType) throws Exception {
 
 		if (userType != 0 && userType != 1)
 			throw new AuthenticationException("Usuário sem permissão");
 
-		UserDTO info = userProfileService.alterInfo(id, dto);
+		UserUpdateDTO info = userProfileService.alterInfo(id, dto);
 
 		return ResponseEntity.ok(info);
 	}
 
-	@GetMapping("/{id}")
+	@GetMapping("/{id}/info")
 	public ResponseEntity<UserDTO> getUserInfo(@PathVariable UUID id, @RequestHeader("X-User-Id") UUID UserId,
 			@RequestHeader("X-User-Email") String emailUser, @RequestHeader("X-User-Type") Integer userType)
 			throws Exception {
@@ -103,40 +104,40 @@ public class WsUserProfileController {
 	// Detalhes Usuario
 
 	@PostMapping("/{id}/details")
-	public ResponseEntity<UserDetailsDTO> createDetails(@PathVariable UUID id, @RequestBody UserDetailsDTO dto,
+	public ResponseEntity<UserDetailsResponseDTO> createDetails(@PathVariable UUID id, @RequestBody UserDetailsRequestDTO dto,
 			@RequestHeader("X-User-Id") UUID UserId, @RequestHeader("X-User-Email") String emailUser,
 			@RequestHeader("X-User-Type") Integer userType) throws Exception {
 
 		if (userType != 0 && userType != 1)
 			throw new AuthenticationException("Usuário sem permissão");
 
-		UserDetailsDTO createDetails = userProfileService.addDetails(id, dto);
+		UserDetailsResponseDTO createDetails = userProfileService.addDetails(id, dto);
 
 		return ResponseEntity.status(201).body(createDetails);
 	}
 
 	@PatchMapping("/{id}/details")
-	public ResponseEntity<UserDetailsDTO> updateDetails(@PathVariable UUID id, @RequestBody UserDetailsDTO dto,
+	public ResponseEntity<UserDetailsResponseDTO> updateDetails(@PathVariable UUID id, @RequestBody UserDetailsRequestDTO dto,
 			@RequestHeader("X-User-Id") UUID UserId, @RequestHeader("X-User-Email") String emailUser,
 			@RequestHeader("X-User-Type") Integer userType) throws Exception {
 
 		if (userType != 0 && userType != 1)
 			throw new AuthenticationException("Usuário sem permissão");
 
-		UserDetailsDTO updateDetails = userProfileService.updateDetails(id, dto);
+		UserDetailsResponseDTO updateDetails = userProfileService.updateDetails(id, dto);
 
 		return ResponseEntity.ok(updateDetails);
 	}
 
 	@GetMapping("/{id}/details")
-	public ResponseEntity<UserDetailsDTO> getDetails(@PathVariable UUID id, @RequestHeader("X-User-Id") UUID UserId,
+	public ResponseEntity<UserDetailsResponseDTO> getDetails(@PathVariable UUID id, @RequestHeader("X-User-Id") UUID UserId,
 			@RequestHeader("X-User-Email") String emailUser, @RequestHeader("X-User-Type") Integer userType)
 			throws Exception {
 
 		if (userType != 0 && userType != 1)
 			throw new AuthenticationException("Usuário sem permissão");
 
-		UserDetailsDTO details = userProfileService.getDetailsById(id);
+		UserDetailsResponseDTO details = userProfileService.getDetailsById(id);
 
 		return ResponseEntity.ok(details);
 	}
