@@ -2,8 +2,6 @@ package br.edu.atitus.user_service.controllers;
 
 import java.util.UUID;
 
-import javax.security.sasl.AuthenticationException;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,7 +40,10 @@ public class WsUserProfileController {
 			@RequestHeader("X-User-Type") Integer userType) throws Exception {
 
 		if (userType != 0 && userType != 1)
-			throw new AuthenticationException("Usuário sem permissão");
+			throw new SecurityException("Usuário sem permissão");
+		
+		if (userType != 0 && !id.equals(UserId))
+			throw new SecurityException("Você não está autorizado a modificar dados de outros usuários");
 
 		UserUpdateDTO info = userProfileService.alterInfo(id, dto);
 
@@ -55,7 +56,10 @@ public class WsUserProfileController {
 			throws Exception {
 
 		if (userType != 0 && userType != 1)
-			throw new AuthenticationException("Usuário sem permissão");
+			throw new SecurityException("Usuário sem permissão");
+		
+		if (userType != 0 && !id.equals(UserId))
+			throw new SecurityException("Você não está autorizado a modificar dados de outros usuários");
 
 		UserDTO info = userProfileService.getInfoById(id);
 		return ResponseEntity.ok(info);
@@ -69,7 +73,10 @@ public class WsUserProfileController {
 			@RequestHeader("X-User-Type") Integer userType) throws Exception {
 
 		if (userType != 0 && userType != 1)
-			throw new AuthenticationException("Usuário sem permissão");
+			throw new SecurityException("Usuário sem permissão");
+		
+		if (userType != 0 && !id.equals(UserId))
+			throw new SecurityException("Você não está autorizado a modificar dados de outros usuários");
 
 		UserAddressEntity CreateAddress = userProfileService.addAddress(id, dto);
 
@@ -82,7 +89,10 @@ public class WsUserProfileController {
 			@RequestHeader("X-User-Type") Integer userType) throws Exception {
 
 		if (userType != 0 && userType != 1)
-			throw new AuthenticationException("Usuário sem permissão");
+			throw new SecurityException("Usuário sem permissão");
+		
+		if (userType != 0 && !id.equals(UserId))
+			throw new SecurityException("Você não está autorizado a modificar dados de outros usuários");
 
 		UserAddressEntity UpdateAddress = userProfileService.alterAddress(id, dto);
 
@@ -95,7 +105,10 @@ public class WsUserProfileController {
 			throws Exception {
 
 		if (userType != 0 && userType != 1)
-			throw new AuthenticationException("Usuário sem permissão");
+			throw new SecurityException("Usuário sem permissão");
+		
+		if (userType != 0 && !id.equals(UserId))
+			throw new SecurityException("Você não está autorizado a modificar dados de outros usuários");
 
 		UserAddressEntity getAddress = userProfileService.getAddressById(id);
 		return ResponseEntity.ok(getAddress);
@@ -109,7 +122,10 @@ public class WsUserProfileController {
 			@RequestHeader("X-User-Type") Integer userType) throws Exception {
 
 		if (userType != 0 && userType != 1)
-			throw new AuthenticationException("Usuário sem permissão");
+			throw new SecurityException("Usuário sem permissão");
+		
+		if (userType != 0 && !id.equals(UserId))
+			throw new SecurityException("Você não está autorizado a modificar dados de outros usuários");
 
 		UserDetailsResponseDTO createDetails = userProfileService.addDetails(id, dto);
 
@@ -122,7 +138,10 @@ public class WsUserProfileController {
 			@RequestHeader("X-User-Type") Integer userType) throws Exception {
 
 		if (userType != 0 && userType != 1)
-			throw new AuthenticationException("Usuário sem permissão");
+			throw new SecurityException("Usuário sem permissão");
+		
+		if (userType != 0 && !id.equals(UserId))
+			throw new SecurityException("Você não está autorizado a modificar dados de outros usuários");
 
 		UserDetailsResponseDTO updateDetails = userProfileService.updateDetails(id, dto);
 
@@ -135,17 +154,14 @@ public class WsUserProfileController {
 			throws Exception {
 
 		if (userType != 0 && userType != 1)
-			throw new AuthenticationException("Usuário sem permissão");
+			throw new SecurityException("Usuário sem permissão");
+		
+		if (userType != 0 && !id.equals(UserId))
+			throw new SecurityException("Você não está autorizado a modificar dados de outros usuários");
 
 		UserDetailsResponseDTO details = userProfileService.getDetailsById(id);
 
 		return ResponseEntity.ok(details);
-	}
-
-	@ExceptionHandler(AuthenticationException.class)
-	public ResponseEntity<String> handlerAuth(AuthenticationException e) {
-		String message = e.getMessage().replaceAll("[\\r\\n]", "");
-		return ResponseEntity.status(403).body(message);
 	}
 
 }
