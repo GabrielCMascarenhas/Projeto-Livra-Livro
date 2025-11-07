@@ -2,9 +2,7 @@ package br.edu.atitus.auth_service.controllers;
 
 import java.util.UUID;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.edu.atitus.auth_service.dtos.CredentialsUpdateDTO;
 import br.edu.atitus.auth_service.dtos.EmailDTO;
 import br.edu.atitus.auth_service.services.UserAuthService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/ws/auth")
@@ -28,17 +27,24 @@ public class WsAuthController {
 		this.service = service;
 	}
 
-	@PatchMapping("/credentials/{id}")
-	public ResponseEntity<CredentialsUpdateDTO> updateCredentials(@PathVariable UUID id,
-			@RequestBody CredentialsUpdateDTO credentials, @RequestHeader("X-User-Id") UUID UserId,
-			@RequestHeader("X-User-Email") String emailUser, @RequestHeader("X-User-Type") Integer userType)
-			throws Exception {
-
+	private void validateUserType(Integer userType) {
 		if (userType != 0 && userType != 1)
 			throw new SecurityException("Usuário sem permissão");
+	}
+
+	private void validateUserTypeAndById(UUID id, UUID UserId, Integer userType) {
 
 		if (userType != 0 && !id.equals(UserId))
 			throw new SecurityException("Você não está autorizado a modificar dados de outros usuários");
+	}
+
+	@PatchMapping("/credentials/{id}")
+	public ResponseEntity<CredentialsUpdateDTO> updateCredentials(@PathVariable UUID id,
+			@Valid @RequestBody CredentialsUpdateDTO credentials, @RequestHeader("X-User-Id") UUID UserId,
+			@RequestHeader("X-User-Type") Integer userType) {
+
+		validateUserType(userType);
+		validateUserTypeAndById(id, UserId, userType);
 
 		CredentialsUpdateDTO response = service.updateAccount(id, credentials);
 		return ResponseEntity.ok(response);
@@ -46,14 +52,10 @@ public class WsAuthController {
 
 	@GetMapping("/credentials/{id}")
 	public ResponseEntity<EmailDTO> getEmail(@PathVariable UUID id, @RequestHeader("X-User-Id") UUID UserId,
-			@RequestHeader("X-User-Email") String emailUser, @RequestHeader("X-User-Type") Integer userType)
-			throws Exception {
+			@RequestHeader("X-User-Type") Integer userType) {
 
-		if (userType != 0 && userType != 1)
-			throw new SecurityException("Usuário sem permissão");
-
-		if (userType != 0 && !id.equals(UserId))
-			throw new SecurityException("Você não está autorizado a modificar dados de outros usuários");
+		validateUserType(userType);
+		validateUserTypeAndById(id, UserId, userType);
 
 		EmailDTO email = service.getUserEmail(id);
 		return ResponseEntity.ok(email);

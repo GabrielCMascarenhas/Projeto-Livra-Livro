@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +17,7 @@ import br.edu.atitus.auth_service.dtos.SignupDTO;
 import br.edu.atitus.auth_service.dtos.SignupResponseDTO;
 import br.edu.atitus.auth_service.entities.UserAuthEntity;
 import br.edu.atitus.auth_service.services.UserAuthService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
@@ -33,14 +33,14 @@ public class AuthController {
 	}
 
 	@PostMapping("/signup")
-	public ResponseEntity<SignupResponseDTO> signup(@RequestBody SignupDTO dto) throws Exception {
-		SignupResponseDTO response = service.register(dto);
+	public ResponseEntity<SignupResponseDTO> signup(@Valid @RequestBody SignupDTO dto) {
+		SignupResponseDTO response = service.registerAccount(dto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
 	}
 
 	@PostMapping("/signin")
-	public ResponseEntity<SigninResponseDTO> PostSignin(@RequestBody SigninDTO signin)
+	public ResponseEntity<SigninResponseDTO> signin(@RequestBody SigninDTO signin)
 			throws AuthenticationException, Exception {
 		authConfig.getAuthenticationManager()
 				.authenticate(new UsernamePasswordAuthenticationToken(signin.email(), signin.password()));
