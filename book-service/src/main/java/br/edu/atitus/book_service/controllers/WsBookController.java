@@ -3,12 +3,10 @@ package br.edu.atitus.book_service.controllers;
 import java.util.List;
 import java.util.UUID;
 
-import javax.security.sasl.AuthenticationException;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,14 +27,14 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/ws/books")
 public class WsBookController {
-	private final BookRepository repository;
+	private final BookRepository bookRepository;
 	private BookGenreRepository bookGenreRepository;
 	private BookConditionRepository bookConditionRepository;
 
-	public WsBookController(BookRepository repository, BookGenreRepository bookGenreRepository,
+	public WsBookController(BookRepository bookrepository, BookGenreRepository bookGenreRepository,
 			BookConditionRepository bookConditionRepository) {
 		super();
-		this.repository = repository;
+		this.bookRepository = bookrepository;
 		this.bookGenreRepository = bookGenreRepository;
 		this.bookConditionRepository = bookConditionRepository;
 	}
@@ -60,15 +58,15 @@ public class WsBookController {
 	}
 
 	@PostMapping
-	public ResponseEntity<BookEntity> createBook(@Valid @RequestBody BookDTO dto, @RequestHeader("X-User-Id") UUID UserId,
-			@RequestHeader("X-User-Email") String emailUser, @RequestHeader("X-User-Type") Integer userType)
-			throws Exception {
+	public ResponseEntity<BookEntity> createBook(@Valid @RequestBody BookDTO dto,
+			@RequestHeader("X-User-Id") UUID UserId, @RequestHeader("X-User-Email") String emailUser,
+			@RequestHeader("X-User-Type") Integer userType) throws Exception {
 
 		if (userType != 0 && userType != 1)
-			throw new AuthenticationException("Usuário sem permissão");
+			throw new SecurityException("Usuário sem permissão");
 
 		var book = convertDto2Entity(dto);
-		repository.save(book);
+		bookRepository.save(book);
 
 		return ResponseEntity.status(201).body(book);
 	}
@@ -79,11 +77,11 @@ public class WsBookController {
 			@RequestHeader("X-User-Type") Integer userType) throws Exception {
 
 		if (userType != 0 && userType != 1)
-			throw new AuthenticationException("Usuário sem permissão");
+			throw new SecurityException("Usuário sem permissão");
 
 		var book = convertDto2Entity(dto);
 		book.setId(idBook);
-		repository.save(book);
+		bookRepository.save(book);
 
 		return ResponseEntity.ok(book);
 	}
@@ -94,16 +92,23 @@ public class WsBookController {
 			throws Exception {
 
 		if (userType != 0 && userType != 1)
-			throw new AuthenticationException("Usuário sem permissão");
+			throw new SecurityException("Usuário sem permissão");
 
-		repository.deleteById(idBook);
+		bookRepository.deleteById(idBook);
 
-		return ResponseEntity.ok("Excluído"); // Ou null
+		return ResponseEntity.ok("Excluído"); // Ou null ou ok.("Excluído")
 	}
 
-	@ExceptionHandler(AuthenticationException.class)
-	public ResponseEntity<String> handlerAuth(AuthenticationException e) {
-		String message = e.getMessage().replaceAll("[\\r\\n]", "");
-		return ResponseEntity.status(403).body(message);
+	// Deleta todos livros da conta de um usuário
+
+	@DeleteMapping("/internal/deleteAccount/{id}")
+	@Transactional
+	public ResponseEntity<Void> deleteAllBooksFromUser(@PathVariable UUID id) {
+
+		List<BookEntity> booksToBeDeleted = bookRepository.findBySeller(id);
+		bookRepository.deleteAll(booksToBeDeleted);
+
+		return ResponseEntity.noContent().build();
 	}
+
 }
