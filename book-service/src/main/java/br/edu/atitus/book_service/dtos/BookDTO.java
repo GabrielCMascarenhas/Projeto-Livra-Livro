@@ -21,7 +21,7 @@ public record BookDTO(
 
 		@NotBlank(message = "O título é obrigatório") @Size(max = 255, message = "Título muito longo") String title,
 
-		@NotNull(message = "O preço é obrigatório") @Positive(message = "O preço deve ser positivo") 
+		@NotNull(message = "O preço é obrigatório")
 		@Digits(integer = 5, fraction = 2, message = "Máximo duas casas decimais e cinco dígios antes da vírgula") 
 		@Min(value = 10, message = "O preço mínimo é 10") 
 		@Max(value = 50000, message = "O valor máximo é de 50000") BigDecimal price,
